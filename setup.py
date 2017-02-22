@@ -24,7 +24,13 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 logging.disable(logging.CRITICAL)
 
 classifiers = [
-    "Development Status :: 1 - Planning",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Topic :: Scientific/Engineering :: Mathematics",
 ]
 
 requires = [
