@@ -20,7 +20,7 @@ notifications:
 install:
   # Start the install of everything
   - pip install --upgrade pip wheel
-  - pip install -r dev-requirements.txt
+  - pip install -r requirements-dev.txt
 
 script:
   - pytest -v pyerf
