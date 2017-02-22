@@ -1,0 +1,88 @@
+stages:
+  - init
+  - test
+  - build
+  - deploy
+  - cleanup
+
+variables:
+  VENV_ROOT: C:\temp\builds
+  VENV_PY35: C:\temp\builds\python35_x64
+  PYPI_URL: http://tphweb.tph.local/pypi
+  WINPYTHON_ENV: C:\WinPython35\scripts\env.bat
+
+# Set environment vars
+before_script:
+  # Create the build dir environment variable.
+  - set BUILD_DIR=%VENV_PY35%\%CI_PROJECT_ID%
+  - set BUILD_DIR=%BUILD_DIR%__%CI_PROJECT_NAMESPACE%
+  - set BUILD_DIR=%BUILD_DIR%__%CI_PROJECT_NAME%
+  - set BUILD_DIR=%BUILD_DIR%__%CI_PIPELINE_ID%
+  - set BUILD_DIR=%BUILD_DIR%__%CI_BUILD_REF_NAME%
+  - echo %BUILD_DIR%
+
+install:
+  stage: init
+  when: always
+  tags:
+    - python
+  script:
+    - call %WINPYTHON_ENV%
+    - python -m venv --clear %BUILD_DIR%
+    - call %BUILD_DIR%\Scripts\activate.bat
+
+    - python -m pip install --upgrade pip wheel
+    - python -m pip install -r requirements-dev.txt
+
+test:
+  stage: test
+  when: on_success
+  tags:
+    - python
+  script:
+    - call %WINPYTHON_ENV%
+    - call %BUILD_DIR%\Scripts\activate.bat
+
+    - python -m pytest -v pyerf
+
+build:
+  stage: build
+  when: on_success
+  tags:
+    - python
+  only:
+    - tags
+  script:
+    - call %BUILD_DIR%\Scripts\activate.bat
+    - python setup.py sdist bdist_wheel
+  artifacts:
+    paths:
+      - dist/*
+
+#deploy:
+#  stage: deploy
+#  environment:
+#    name: production
+#    url: $PYPI_URL/simple/pyerf
+#  when: on_success
+#  tags:
+#    - python
+#  only:
+#    - tags
+#  script:
+#    - call %BUILD_DIR%\Scripts\activate.bat
+#    - python -m pip install --upgrade twine
+#    - dir dist\*.zip /b/s > temp.txt
+#    # Read that path into an environment variable.
+#    - set /p VAR=<temp.txt
+#    - echo %VAR%
+#    - twine register --repository %PYPI_URL% --repository-url %PYPI_URL% -u '' -p '' %VAR%
+#    - twine upload --repository %PYPI_URL% --repository-url %PYPI_URL% -u '' -p '' dist/*
+
+clean_up:
+  stage: cleanup
+  when: always
+  tags:
+    - python
+  script:
+    - rd /S /Q %BUILD_DIR%

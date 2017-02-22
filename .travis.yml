@@ -1,0 +1,26 @@
+#################################
+# General setup
+#################################
+language: python
+
+sudo: false
+
+matrix:
+  include:
+  - python: "3.4"
+  - python: "3.5"
+  - python: "3.6"
+
+notifications:
+  email: false
+
+#################################
+# Build Lifecycle
+#################################
+install:
+  # Start the install of everything
+  - pip install --upgrade pip wheel
+  - pip install -r dev-requirements.txt
+
+script:
+  - pytest -v pyerf
