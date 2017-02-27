@@ -8,8 +8,10 @@ Created by Douglas Thor on 2017-02-22 16:08:02 UTC.
 ### Imports
 # ---------------------------------------------------------------------------
 # Standard Library
-import os
-import math
+try:
+    from math import inf
+except ImportError:
+    inf = float('inf')
 
 
 # Third-Party
@@ -78,6 +80,6 @@ class TestErfInv(object):
         assert np.allclose(y, sp.erfinv(x))
 
     def test_erfinv_extremes(self):
-        assert pyerf.erfinv(1) == math.inf
-        assert pyerf.erfinv(-1) == -math.inf
+        assert pyerf.erfinv(1) == inf
+        assert pyerf.erfinv(-1) == -inf
         assert pyerf.erfinv(0) == 0
