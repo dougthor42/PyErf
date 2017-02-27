@@ -13,7 +13,6 @@ try:
 except ImportError:
     inf = float('inf')
 
-
 # Third-Party
 import pytest
 
@@ -23,7 +22,6 @@ try:
     import scipy.special as sp
 except ImportError:
     has_scipy = False
-
 
 # Package / Application
 from .. import pyerf

@@ -14,16 +14,27 @@ import math
 # ---------------------------------------------------------------------------
 ### Constants
 # ---------------------------------------------------------------------------
-PI = 3.141592653589793      # cause I don't want to import numpy.
+# While some of these are used only in _ndtri, we don't want to
+# calculate them each time a user calls erfinv. So we define them at the
+# module level and they'll only be calculated once.
+PI = math.pi
+ROOT_2PI = math.sqrt(2 * PI)
+EXP_NEG2 = math.exp(-2)
 
 # bring the built-ins into this namespace for conveinence.
-erf = math.erf
-erfc = math.erfc
+try:
+    erf = math.erf
+    erfc = math.erfc
+except ImportError:
+    msg = "Python >= 3.2 is required for the math.erf and erfc functions."
+    raise ImportWarning(msg)
 
+# math.inf was added in Python 3.5.
 try:
     from math import inf
 except ImportError:
     inf = float('inf')
+
 
 # ---------------------------------------------------------------------------
 ### Functions
@@ -127,18 +138,19 @@ def _ndtri(y):
         6.79019408009981274425E-9,
     ]
 
-    s2pi = 2.50662827463100050242
-    code = 1
+    sign_flag = 1
 
-    if y > (1.0 - 0.13533528323661269189):      # 0.135... = exp(-2)
-        y = 1.0 - y
-        code = 0
+    if y > (1 - EXP_NEG2):
+        y = 1 - y
+        sign_flag = 0
 
-    if y > 0.13533528323661269189:
-        y = y - 0.5
-        y2 = y * y
+    # Shortcut case where we don't need high precision
+    # between -0.135 and 0.135
+    if y > EXP_NEG2:
+        y -= 0.5
+        y2 = y ** 2
         x = y + y * (y2 * _polevl(y2, P0, 4) / _p1evl(y2, Q0, 8))
-        x = x * s2pi
+        x = x * ROOT_2PI
         return x
 
     x = math.sqrt(-2.0 * math.log(y))
@@ -151,7 +163,7 @@ def _ndtri(y):
         x1 = z * _polevl(z, P2, 8) / _p1evl(z, Q2, 8)
 
     x = x0 - x1
-    if code != 0:
+    if sign_flag != 0:
         x = -x
 
     return x
@@ -198,13 +210,16 @@ def erfinv(z):
     >>> erfinv(-1)
     -inf
     """
-    if z < -1 or z > 1:
+    if abs(z) > 1:
         raise ValueError("`z` must be between -1 and 1 inclusive")
 
+    # Shortcut special cases
     if z == 0:
         return 0
     if z == 1:
         return inf
     if z == -1:
         return -inf
+
+    # otherwise calculate things.
     return _ndtri((z + 1) / 2.0) / math.sqrt(2)
