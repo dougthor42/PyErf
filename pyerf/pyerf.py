@@ -20,6 +20,11 @@ PI = 3.141592653589793      # cause I don't want to import numpy.
 erf = math.erf
 erfc = math.erfc
 
+try:
+    from math import inf
+except ImportError:
+    inf = float('inf')
+
 # ---------------------------------------------------------------------------
 ### Functions
 # ---------------------------------------------------------------------------
@@ -199,7 +204,7 @@ def erfinv(z):
     if z == 0:
         return 0
     if z == 1:
-        return math.inf
+        return inf
     if z == -1:
-        return -math.inf
+        return -inf
     return _ndtri((z + 1) / 2.0) / math.sqrt(2)
