@@ -83,3 +83,15 @@ class TestErfInv(object):
         assert pyerf.erfinv(1) == inf
         assert pyerf.erfinv(-1) == -inf
         assert pyerf.erfinv(0) == 0
+
+    def test_erfinv_raises_error(self):
+        values = (
+            -2,
+            2,
+            -1.00000001,
+            1.00000001,
+            inf,
+        )
+        for val in values:
+            with pytest.raises(ValueError):
+                pyerf.erfinv(val)
