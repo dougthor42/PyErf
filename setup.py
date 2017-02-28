@@ -48,6 +48,7 @@ setup(
     url=about["__project_url__"],
 
     author=about["__author__"],
+    author_email=about["__email__"],
     license=about["__license__"],
 
     packages=find_packages(),
