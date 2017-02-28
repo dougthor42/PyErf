@@ -26,3 +26,12 @@ install:
 
 script:
   - python -m pytest -v pyerf
+
+deploy:
+  privider: pypi
+  user: dougthor42
+  password:
+    secure: "S73dnG4PeBIRpIK4iGdM1/+jsEekSkdneL5r1bE/bxecC9w0HTAyPJ0wxWcTEGJ0GXT7C8/QWAkpiutHkHfLy6/H1jzeZzOMKAPM0esSaj3uGzFsOsn8LKPta/MWQEg+wDSfeB5oYRYndoTefOZ6Nl64zi1BxqbYeok/FxTh21TOpRDf6XJY7DNyiEfYI7g90pp4MbcXVefapN+ZyGfNOXGbTz9Hdwq8Sosal73GU0DsNPCP4ay4y6aehxgdZkIhVrSlS2HUEQyKKUDo81nw/H1FL3ktF5JTuZDGOrjUufE1qDntHfr8TaYdP4loKfjCfCbTWkCw4MF+rIawNFOEuRqidhaAP1MDHA+RS6KJHX416W9wTZ6ix/E775jllI0D/MCSUNOEaD7DUR+GQU/IDxcxEO0dD8YFJ12+V17KSFsFk2lCwkCAHjoLmQ7BLpqNlH+E/r9dPB5pbEIP7OFhOV4eMqoMDtZN1Tvs401u4lqIP+ulKlK/rnUWmer4PUspeoEk2A4+MEQov6ENaD5nFsWwOGRazlmXkhc8MO6IGWWk83Q9dp9+reZ9muq6cbrK/6/bQYDedLdRY/X3SurqG6Oxy+ocIgnN9tJ22UPcz6O/uwBiWxbhkA0k5NaE9mIRHXZmoH3nxf+5RgOTMzWQUmy5++mUWhiobuF2k/aoXUQ="
+  on:
+    tags: true
+  distributions: "sdist bdist_wheel"
