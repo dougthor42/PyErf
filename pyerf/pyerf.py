@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Main module for PyErf.
-
-A pure-Python implementation of the error function and inverse error function.
+This is the main module for PyErf.
 """
 # ---------------------------------------------------------------------------
 ### Imports

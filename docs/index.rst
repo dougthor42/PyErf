@@ -3,10 +3,11 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to PyErf's documentation!
-=================================
+.. include:: ../README.rst
 
 
+pyerf.pyerf
+-----------
 .. automodule:: pyerf.pyerf
    :members:
 
