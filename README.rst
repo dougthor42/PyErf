@@ -30,8 +30,8 @@ See `CHANGELOG.md`_.
   :target: https://pypi.python.org/pypi/pyerf/
   :alt: Supported Python Versions
 
-.. |docs| image:: https://readthedocs.org/projects/pyerf/badge/?version=latest
-  :target: http://pyerf.readthedocs.io/en/latest/?badge=latest
+.. |docs| image:: https://img.shields.io/badge/docs-pythonhosted-brightgreen.svg
+  :target: https://pythonhosted.org/pyerf
   :alt: Documentation Status
 
 .. _`CHANGELOG.md`: https://github.com/dougthor42/PyErf/blob/master/CHANGELOG.md

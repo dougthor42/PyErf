@@ -1,6 +1,11 @@
 # Changelog for PyErf:
 
 
+## 0.1.3 (2017-02-27): More Python Version!
++ Added support for Python27, 33, and 34 by backporting erf and erfc.
++ added Travis auto-deploy to PyPI.
+
+
 ## 0.1.1 (2017-02-22): Initial Release
 + Initial release! Horray!
 
