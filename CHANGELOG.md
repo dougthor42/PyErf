@@ -1,6 +1,11 @@
 # Changelog for PyErf:
 
 
+## 0.1.6 (2017-03-02)
++ Added PyPy builds to Travis
++ Added author email to setup.py
+
+
 ## 0.1.5 (2017-02-27)
 + Updated `README.rst` and other docs.
 
