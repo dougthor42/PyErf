@@ -26,6 +26,10 @@ except ImportError:
     inf = float('inf')
 
 
+#: Inputs above this value are considered infinity.
+MAXVAL = 1e50
+
+
 # ---------------------------------------------------------------------------
 ### Functions
 # ---------------------------------------------------------------------------
@@ -54,9 +58,9 @@ def _erf(x):
     # Shorcut special cases
     if x == 0:
         return 0
-    if x == inf:
+    if x >= MAXVAL:
         return 1
-    if x == -inf:
+    if x <= -MAXVAL:
         return -1
 
     if abs(x) > 1:
@@ -118,9 +122,9 @@ def _erfc(a):
     # Shortcut special cases
     if a == 0:
         return 1
-    if a == inf:
+    if a >= MAXVAL:
         return 0
-    if a == -inf:
+    if a <= -MAXVAL:
         return 2
 
     x = a
@@ -152,21 +156,24 @@ def _erfc(a):
 
 def _polevl(x, coefs, N):
     """
-    Port of cephes ``polevl.c``.
+    Port of cephes ``polevl.c``: evaluate polynomial
 
     See https://github.com/jeremybarnes/cephes/blob/master/cprob/polevl.c
     """
     ans = 0
     power = len(coefs) - 1
     for coef in coefs:
-        ans += coef * x**power
+        try:
+            ans += coef * x**power
+        except OverflowError:
+            pass
         power -= 1
     return ans
 
 
 def _p1evl(x, coefs, N):
     """
-    Port of cephes ``polevl.c``.
+    Port of cephes ``polevl.c``: evaluate polynomial, assuming coef[N] = 1
 
     See https://github.com/jeremybarnes/cephes/blob/master/cprob/polevl.c
     """
@@ -175,7 +182,7 @@ def _p1evl(x, coefs, N):
 
 def _ndtri(y):
     """
-    Port of cephes ``ndtri.c``
+    Port of cephes ``ndtri.c``: inverse normal distribution function.
 
     See https://github.com/jeremybarnes/cephes/blob/master/cprob/ndtri.c
     """
@@ -338,6 +345,7 @@ def erfinv(z):
 
 # bring the built-ins into this namespace for conveinence.
 try:
+    # math.erf and math.erfc were added in Python 3.2
     erf = math.erf
     erfc = math.erfc
 except ImportError:
