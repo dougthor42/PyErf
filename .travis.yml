@@ -14,6 +14,8 @@ matrix:
   - python: "3.6"
   - python: "pypy"
   - python: "pypy3"
+  allow_failures:
+  - python: "pypy3"
 
 notifications:
   email: false
@@ -27,7 +29,7 @@ install:
   - pip install -r requirements-dev.txt
 
 script:
-  - python -m pytest -v pyerf
+  - python -m pytest -v pyerf --cov=pyerf --cov-report term-missing --cov-config .coveragerc
 
 deploy:
   provider: pypi
