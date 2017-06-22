@@ -9,6 +9,7 @@ Created by Douglas Thor on 2017-02-22 16:08:02 UTC.
 # ---------------------------------------------------------------------------
 # Standard Library
 import decimal
+import os
 try:
     from math import inf
 except ImportError:
@@ -18,6 +19,7 @@ except ImportError:
 import pytest
 from hypothesis import assume
 from hypothesis import given
+from hypothesis import settings
 from hypothesis import strategies as st
 
 has_scipy = True
@@ -32,8 +34,12 @@ from .. import pyerf
 
 
 # ---------------------------------------------------------------------------
-### Constants
+### Constants and Setup
 # ---------------------------------------------------------------------------
+# Create a profile for testing on CI (Travis, GitLab, etc.)
+settings.register_profile('ci', settings(max_examples=1000))
+if os.getenv('CI', None) is not None:
+    settings.load_profile('ci')
 
 
 # ---------------------------------------------------------------------------
