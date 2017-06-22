@@ -1,8 +1,15 @@
 # Changelog for PyErf:
 
 
+## 1.0.0 (2017-06-22)
++ Updates to unit tests (#6)
++ Better builds (#6)
++ Fixed some edge-case bugs (#6)
++ Updated image url for builds (#7)
+
+
 ## 0.1.6 (2017-03-02)
-+ Added PyPy builds to Travis
++ Added PyPy builds to Travis (#5)
 + Added author email to setup.py
 
 
