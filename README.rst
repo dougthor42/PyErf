@@ -58,7 +58,7 @@ See `CHANGELOG.md`_.
 
 .. Images and Links
 
-.. |travis| image:: https://img.shields.io/travis/dougthor42/pyerf.svg
+.. |travis| image:: https://travis-ci.org/dougthor42/PyErf.svg?branch=master
   :target: https://travis-ci.org/dougthor42/PyErf
   :alt: Travis-CI (Linux, Max)
 
