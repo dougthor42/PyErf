@@ -5,14 +5,22 @@ language: python
 
 sudo: false
 
+env:
+- SCIPY=true
+
 matrix:
   include:
   - python: "2.7"
   - python: "3.3"
+    env: SCIPY=false
   - python: "3.4"
   - python: "3.5"
   - python: "3.6"
   - python: "pypy"
+    env: SCIPY=false
+  - python: "pypy3"
+    env: SCIPY=false
+  allow_failures:
   - python: "pypy3"
 
 notifications:
@@ -25,9 +33,11 @@ install:
   # Start the install of everything
   - pip install --upgrade pip wheel
   - pip install -r requirements-dev.txt
+  # Install SciPy for most builds.
+  - if [ $SCIPY = true ]; then python -m pip install scipy==0.19.0; fi;
 
 script:
-  - python -m pytest -v pyerf
+  - python -m pytest -v pyerf --cov=pyerf --cov-report term-missing --cov-config .coveragerc
 
 deploy:
   provider: pypi

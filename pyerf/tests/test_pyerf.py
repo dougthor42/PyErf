@@ -9,6 +9,7 @@ Created by Douglas Thor on 2017-02-22 16:08:02 UTC.
 # ---------------------------------------------------------------------------
 # Standard Library
 import decimal
+import os
 try:
     from math import inf
 except ImportError:
@@ -16,6 +17,10 @@ except ImportError:
 
 # Third-Party
 import pytest
+from hypothesis import assume
+from hypothesis import given
+from hypothesis import settings
+from hypothesis import strategies as st
 
 has_scipy = True
 try:
@@ -29,8 +34,12 @@ from .. import pyerf
 
 
 # ---------------------------------------------------------------------------
-### Constants
+### Constants and Setup
 # ---------------------------------------------------------------------------
+# Create a profile for testing on CI (Travis, GitLab, etc.)
+settings.register_profile('ci', settings(max_examples=1000))
+if os.getenv('CI', None) is not None:
+    settings.load_profile('ci')
 
 
 # ---------------------------------------------------------------------------
@@ -40,6 +49,26 @@ def frange(x, y, jump):
     while x < y:
         yield float(x)
         x += decimal.Decimal(jump)
+
+
+@pytest.fixture(scope="module", params=[True, False])
+def use_math_stdlib(request):
+    # this 1st import is just to bring things into the namespace.
+    from .. import pyerf
+
+    # Delete the old pyerf module from our namespace because it might have
+    # been modified by this very function.
+    del pyerf
+    from .. import pyerf
+
+    # Are we using the `math` stdlib module?
+    if request.param:
+        # don't do anything special
+        pass
+    else:
+        # force pyerf to use the private methods
+        pyerf.erf = pyerf._erf
+        pyerf.erfc = pyerf._erfc
 
 
 # ---------------------------------------------------------------------------
@@ -99,6 +128,17 @@ class TestErfInv(object):
             with pytest.raises(ValueError):
                 pyerf.erfinv(val)
 
+    @given(st.floats())
+    def test_exceptions(self, x):
+        allowed_exceptions = (ValueError, )
+        try:
+            pyerf.erfinv(x)
+        except allowed_exceptions:
+            pass
+        except Exception as err:
+            err_txt = "An unexpected exception was raised! {}".format(err)
+            raise AssertionError(err_txt)
+
 
 class TestErf(object):
     def test_erf_error(self):
@@ -133,13 +173,13 @@ class TestErf(object):
             error = (expected - result) / result
             assert abs(error) < 1e-10
 
-    def test_erf_extremes(self):
+    def test_erf_extremes(self, use_math_stdlib):
         assert pyerf.erf(0) == 0
         assert pyerf.erf(inf) == 1
         assert pyerf.erf(-inf) == -1
 
     @pytest.mark.skipif(not has_scipy, reason="Numpy or Scipy not installed")
-    def test_erf_error_vs_scipy(self):
+    def test_erf_error_vs_scipy(self, use_math_stdlib):
         x = np.arange(-4, 4, 0.0001)
         N = len(x)
 
@@ -149,6 +189,26 @@ class TestErf(object):
             y[i] = pyerf.erf(x[i])
 
         assert np.allclose(y, sp.erf(x))
+
+    @given(st.floats())
+    def test_exceptions(self, use_math_stdlib, x):
+        allowed_exceptions = (ValueError, )
+        try:
+            pyerf.erf(x)
+        except allowed_exceptions:
+            pass
+        except Exception as err:
+            err_txt = "An unexpected exception was raised! {}".format(err)
+            raise AssertionError(err_txt)
+
+    @given(st.floats(allow_nan=False))
+    def test_result_always_between_plus_minus_one(self, use_math_stdlib, x):
+        assume(abs(x) <= 1e300)
+        import platform
+        if platform.python_implementation() == "PyPy":
+            assume(abs(x) < 1e100)
+        assert pyerf.erf(x) <= 1
+        assert pyerf.erf(x) >= -1
 
 
 class TestErfc(object):
@@ -185,7 +245,7 @@ class TestErfc(object):
             assert abs(error) < 1e-10
 
     @pytest.mark.skipif(not has_scipy, reason="Numpy or Scipy not installed")
-    def test_erfc_error_vs_scipy(self):
+    def test_erfc_error_vs_scipy(self, use_math_stdlib):
         x = np.arange(-4, 4, 0.0001)
         N = len(x)
 
@@ -196,15 +256,83 @@ class TestErfc(object):
 
         assert np.allclose(y, sp.erfc(x))
 
+    @given(st.floats())
+    def test_exceptions(self, use_math_stdlib, x):
+        allowed_exceptions = (ValueError, )
+        try:
+            pyerf.erfc(x)
+        except allowed_exceptions:
+            pass
+        except Exception as err:
+            err_txt = "An unexpected exception was raised! {}".format(err)
+            raise AssertionError(err_txt)
+
+    def test_erfc_extremes(self, use_math_stdlib):
+        assert pyerf.erfc(0) == 1
+        assert pyerf.erfc(inf) == 0
+        assert pyerf.erfc(-inf) == 2
+
+    @given(st.floats(allow_nan=False))
+    def test_result_always_between_zero_and_two(self, use_math_stdlib, x):
+        assume(abs(x) <= 1e100)
+        assert pyerf.erfc(x) <= 2
+        assert pyerf.erfc(x) >= 0
+
 
 class TestErfErfc(object):
-    def test_erf_erfc_complements(self):
+    def test_erf_erfc_complements(self, use_math_stdlib):
         data = frange(-4, 4, 0.001)
 
         for x in data:
             assert round(pyerf.erf(x) + pyerf.erfc(x), 10) == 1
 
-    def test_erfc_extremes(self):
-        assert pyerf.erfc(0) == 1
-        assert pyerf.erfc(inf) == 0
-        assert pyerf.erfc(-inf) == 2
+
+class TestErfErfInv(object):
+    @given(st.floats(min_value=-1, max_value=1, allow_nan=False))
+    def test_erf_erfinv_compliments(self, use_math_stdlib, x):
+        assume(abs(x) <= 0.99999999)
+        assert pyerf.erf(pyerf.erfinv(x)) == pytest.approx(x)
+
+    @given(st.floats(min_value=-4, max_value=4, allow_nan=False))
+    def test_erfinv_erf_compliments(self, use_math_stdlib, x):
+        assume(abs(x) >= 1e-300)
+        assert abs(pyerf.erfinv(pyerf.erf(x)) - x) <= abs(10 * x)
+
+
+class Test_PolEvl(object):
+    @given(st.floats(), st.lists(st.floats()), st.integers())
+    def test_exceptions(self, use_math_stdlib, x, coefs, N):
+        allowed_exceptions = (ValueError, )
+        try:
+            pyerf._polevl(x, coefs, N)
+        except allowed_exceptions:
+            pass
+        except Exception as err:
+            err_txt = "An unexpected exception was raised! {}".format(err)
+            raise AssertionError(err_txt)
+
+
+class Test_P1Evl(object):
+    @given(st.floats(), st.lists(st.floats()), st.integers())
+    def test_exceptions(self, use_math_stdlib, x, coefs, N):
+        allowed_exceptions = (ValueError, )
+        try:
+            pyerf._p1evl(x, coefs, N)
+        except allowed_exceptions:
+            pass
+        except Exception as err:
+            err_txt = "An unexpected exception was raised! {}".format(err)
+            raise AssertionError(err_txt)
+
+
+class Test_ndtri(object):
+    @given(st.floats())
+    def test_exceptions(self, use_math_stdlib, x):
+        allowed_exceptions = (ValueError, )
+        try:
+            pyerf._ndtri(x)
+        except allowed_exceptions:
+            pass
+        except Exception as err:
+            err_txt = "An unexpected exception was raised! {}".format(err)
+            raise AssertionError(err_txt)
