@@ -295,5 +295,44 @@ class TestErfErfInv(object):
 
     @given(st.floats(min_value=-4, max_value=4, allow_nan=False))
     def test_erfinv_erf_compliments(self, use_math_stdlib, x):
-        assume(abs(x) >= 1e-12)
-        assert pyerf.erfinv(pyerf.erf(x)) / x == pytest.approx(1)
+        assume(abs(x) >= 1e-300)
+        assert abs(pyerf.erfinv(pyerf.erf(x)) - x) <= abs(10 * x)
+
+
+class Test_PolEvl(object):
+    @given(st.floats(), st.lists(st.floats()), st.integers())
+    def test_exceptions(self, use_math_stdlib, x, coefs, N):
+        allowed_exceptions = (ValueError, )
+        try:
+            pyerf._polevl(x, coefs, N)
+        except allowed_exceptions:
+            pass
+        except Exception as err:
+            err_txt = "An unexpected exception was raised! {}".format(err)
+            raise AssertionError(err_txt)
+
+
+class Test_P1Evl(object):
+    @given(st.floats(), st.lists(st.floats()), st.integers())
+    def test_exceptions(self, use_math_stdlib, x, coefs, N):
+        allowed_exceptions = (ValueError, )
+        try:
+            pyerf._p1evl(x, coefs, N)
+        except allowed_exceptions:
+            pass
+        except Exception as err:
+            err_txt = "An unexpected exception was raised! {}".format(err)
+            raise AssertionError(err_txt)
+
+
+class Test_ndtri(object):
+    @given(st.floats())
+    def test_exceptions(self, use_math_stdlib, x):
+        allowed_exceptions = (ValueError, )
+        try:
+            pyerf._ndtri(x)
+        except allowed_exceptions:
+            pass
+        except Exception as err:
+            err_txt = "An unexpected exception was raised! {}".format(err)
+            raise AssertionError(err_txt)
