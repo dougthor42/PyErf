@@ -1,6 +1,11 @@
 # Changelog for PyErf:
 
 
+## 1.0.1 (2017-06-22)
++ Mucked up the previous release... No actual code change, just need to not
+  have [ci skip] in my commit message. Doh!
+
+
 ## 1.0.0 (2017-06-22)
 + Updates to unit tests (#6)
 + Better builds (#6)
