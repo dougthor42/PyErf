@@ -3,8 +3,6 @@
 #################################
 language: python
 
-sudo: false
-
 env:
 - SCIPY=true PIP_VERS=18.1 WHEEL_VERS=0.32.2
 
