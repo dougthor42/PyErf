@@ -6,20 +6,21 @@ language: python
 sudo: false
 
 env:
-- SCIPY=true
+- SCIPY=true PIP_VERS=18.1 WHEEL_VERS=0.32.2
 
 matrix:
   include:
   - python: "2.7"
+    env: SCIPY=true PIP_VERS=10.0.1 WHEEL_VERS=0.32.2
   - python: "3.3"
-    env: SCIPY=false
+    env: SCIPY=false PIP_VERS=10.0.1 WHEEL_VERS=0.32.2
   - python: "3.4"
   - python: "3.5"
   - python: "3.6"
   - python: "pypy"
-    env: SCIPY=false
+    env: SCIPY=false PIP_VERS=18.1 WHEEL_VERS=0.32.2
   - python: "pypy3"
-    env: SCIPY=false
+    env: SCIPY=false PIP_VERS=18.1 WHEEL_VERS=0.32.2
   allow_failures:
   - python: "pypy3"
 
@@ -31,7 +32,7 @@ notifications:
 #################################
 install:
   # Start the install of everything
-  - pip install --upgrade pip wheel
+  - pip install --upgrade pip==$PIP_VERS wheel==$WHEEL_VERS
   - pip install -r requirements-dev.txt
   # Install SciPy for most builds.
   - if [ $SCIPY = true ]; then python -m pip install scipy==0.19.0; fi;
