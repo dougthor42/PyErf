@@ -33,7 +33,7 @@ install:
   - pip install --upgrade pip==$PIP_VERS wheel==$WHEEL_VERS
   - pip install -r requirements-dev.txt
   # Install SciPy for most builds.
-  - if [ $SCIPY = true ]; then python -m pip install scipy==0.19.0; fi;
+  - if [ $SCIPY = true ]; then pip install scipy==0.19.0; fi;
 
 script:
   - pytest -ra pyerf --cov=pyerf --cov-report term-missing --cov-config .coveragerc
