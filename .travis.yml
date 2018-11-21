@@ -36,7 +36,7 @@ install:
   - if [ $SCIPY = true ]; then python -m pip install scipy==0.19.0; fi;
 
 script:
-  - python -m pytest -v pyerf --cov=pyerf --cov-report term-missing --cov-config .coveragerc
+  - pytest -ra pyerf --cov=pyerf --cov-report term-missing --cov-config .coveragerc
 
   # Travis-CI prints out the exit code for everything, so we don't need to
   # print out pass/fail after this (even though doctest doesn't echo anything
