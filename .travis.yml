@@ -38,6 +38,11 @@ install:
 script:
   - python -m pytest -v pyerf --cov=pyerf --cov-report term-missing --cov-config .coveragerc
 
+  # Travis-CI prints out the exit code for everything, so we don't need to
+  # print out pass/fail after this (even though doctest doesn't echo anything
+  # when tests pass).
+  - python -m doctest pyerf/pyerf.py
+
 deploy:
   provider: pypi
   user: dougthor42
