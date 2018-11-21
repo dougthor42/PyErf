@@ -368,7 +368,7 @@ def erfcinv(z):
     >>> round(erfcinv(0.95), 12)
     0.04434038791
     >>> round(erfc(erfcinv(1.9)), 12)
-    -1.163087153677    
+    1.9
     """
     if z < 0 or z > 2:
         raise ValueError("`z` must be between 0 and 2 inclusive")
