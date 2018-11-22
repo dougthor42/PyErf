@@ -342,6 +342,45 @@ def erfinv(z):
     # otherwise calculate things.
     return _ndtri((z + 1) / 2.0) / math.sqrt(2)
 
+def erfcinv(z):
+    """
+    Calculate the inverse complementary error function at point ``z``.
+    
+    Parameters
+    ----------
+    z : numeric
+
+    Returns
+    -------
+    float
+
+    References
+    ----------
+    + https://en.wikipedia.org/wiki/Error_function#Inverse_functions
+    + http://functions.wolfram.com/GammaBetaErf/InverseErfc/
+
+    Examples
+    --------
+    >>> round(erfcinv(0.1), 12)
+    1.163087153677
+    >>> round(erfcinv(0.5), 12)
+    0.476936276204    
+    >>> round(erfcinv(0.95), 12)
+    0.04434038791
+    >>> round(erfc(erfcinv(1.9)), 12)
+    1.9
+    """
+    if z < 0 or z > 2:
+        raise ValueError("`z` must be between 0 and 2 inclusive")
+
+    # Shortcut special cases
+    if z == 0:
+        return inf
+    if z == 1:
+        return 0
+    
+    # otherwise calculate things.
+    return -_ndtri(0.5 * z) / math.sqrt(2)
 
 # bring the built-ins into this namespace for conveinence.
 try:
