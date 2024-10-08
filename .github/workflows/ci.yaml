@@ -46,7 +46,12 @@ jobs:
       - name: Run tests
         continue-on-error: ${{ matrix.allowed-to-fail }}
         run: |
-          pytest
+          pytest -ra pyerf --cov=pyerf --cov-report term-missing --cov-config .coveragerc
+
+      - name: Run doctest
+        continue-on-error: ${{ matrix.allowed-to-fail }}
+        run: |
+          python -m doctest pyerf/pyerf.py
 
   # A summary of all jobs and their result.
   # This is the only job that's required to pass (as set by branch protection
