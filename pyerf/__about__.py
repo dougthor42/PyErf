@@ -29,7 +29,9 @@ __project_name__ = "PyErf"
 __project_url__ = "https://www.github.com/dougthor42/pyerf"
 __package_name__ = "pyerf"
 
-__description__ = "A pure-Python implementation of the error function and inverse error function."
+__description__ = (
+    "A pure-Python implementation of the error function and inverse error function."
+)
 __long_descr__ = __doc__
 
 # Try to read the README file and use that as our long description.
