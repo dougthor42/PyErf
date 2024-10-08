@@ -33,6 +33,7 @@ jobs:
 
       - name: "Set up Python ${{ matrix.python-version }}"
         uses: actions/setup-python@v4
+        continue-on-error: ${{ matrix.allowed-to-fail }}
         with:
           python-version: "${{ matrix.python-version }}"
 
