@@ -28,7 +28,7 @@ Sphinx==1.6.2
 sphinxcontrib-serializinghtml==1.1.5
 sphinxcontrib-websupport==1.2.4
 toml==0.10.2
-tomli==2.0.2
+tomli==1.2.3
 typing_extensions==4.1.1
 urllib3==1.26.20
 zipp==3.6.0
