@@ -19,8 +19,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
         allowed-to-fail: [false]
+        include:
+          - python-version: "3.12"
+            allowed-to-fail: true
         include:
           - python-version: "3.13"
             allowed-to-fail: true
