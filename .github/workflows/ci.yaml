@@ -19,9 +19,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
         allowed-to-fail: [false]
         include:
+          # 3.11 fails because of coverage. Need to update to >= 6.3, but then
+          # doing so would drop support for Python 3.6. See
+          # https://coverage.readthedocs.io/en/7.6.1/changes.html#version-6-3-2022-01-25
+          - python-version: "3.11"
+            allowed-to-fail: true
           - python-version: "3.12"
             allowed-to-fail: true
           - python-version: "3.13"
@@ -46,7 +51,12 @@ jobs:
       - name: Run tests
         continue-on-error: ${{ matrix.allowed-to-fail }}
         run: |
-          pytest
+          pytest -ra pyerf --cov=pyerf --cov-report term-missing --cov-config .coveragerc
+
+      - name: Run doctest
+        continue-on-error: ${{ matrix.allowed-to-fail }}
+        run: |
+          python -m doctest pyerf/pyerf.py
 
   # A summary of all jobs and their result.
   # This is the only job that's required to pass (as set by branch protection
