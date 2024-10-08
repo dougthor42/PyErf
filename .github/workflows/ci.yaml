@@ -1,0 +1,65 @@
+# This workflow will install Python dependencies, run tests across multiple
+# Python versions, and lints things with a single version of Python.
+# For more information see:
+# https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+---
+name: CI
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - "master"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  tests:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+        allowed-to-fail: [false]
+        include:
+          - python-version: "3.12"
+            allowed-to-fail: true
+          - python-version: "3.13"
+            allowed-to-fail: true
+    name: "Build and Test: Python ${{ matrix.python-version }}"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: "Set up Python ${{ matrix.python-version }}"
+        uses: actions/setup-python@v4
+        continue-on-error: ${{ matrix.allowed-to-fail }}
+        with:
+          python-version: "${{ matrix.python-version }}"
+
+      - name: Install dependencies
+        continue-on-error: ${{ matrix.allowed-to-fail }}
+        run: |
+          pip install -r requirements-dev.txt
+          pip install -e .
+
+      - name: Run tests
+        continue-on-error: ${{ matrix.allowed-to-fail }}
+        run: |
+          pytest
+
+  # A summary of all jobs and their result.
+  # This is the only job that's required to pass (as set by branch protection
+  # rules in repo settings) so that we don't have to update those rules when
+  # a new job is added.
+  check-all-jobs:
+    if: always()
+    needs:
+      - tests
+      # - lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check status of all jobs.
+        uses: re-actors/alls-green@v1.2.2
+        with:
+          jobs: ${{ toJSON(needs) }}
