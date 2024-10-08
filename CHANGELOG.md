@@ -5,6 +5,7 @@
 + Pip and wheel are now pinned in CI so that builds don't break
   when things are updated. (#9)
 + CI was migrated to GitHub Actions. (#18, #23)
++ Code was formatted with `ruff`. (#24)
 
 
 ## 1.0.1 (2017-06-22)

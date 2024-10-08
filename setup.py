@@ -2,10 +2,7 @@
 """
 setup.py file for PyErf.
 """
-#------------------------------------------------------------------------
-### Imports
-#------------------------------------------------------------------------
-# Standard Library
+
 import logging
 import os
 from setuptools import setup, find_packages
@@ -36,23 +33,18 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 
-requires = [
-]
+requires = []
 
 setup(
     name=about["__package_name__"],
     version=about["__version__"],
-
     description=about["__description__"],
     long_description=long_description,
     url=about["__project_url__"],
-
     author=about["__author__"],
     author_email=about["__email__"],
     license=about["__license__"],
-
     packages=find_packages(),
     classifiers=classifiers,
-
     requires=requires,
 )

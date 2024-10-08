@@ -4,18 +4,15 @@ Unit tests for ``pyerf.pyerf``.
 
 Created by Douglas Thor on 2017-02-22 16:08:02 UTC.
 """
-# ---------------------------------------------------------------------------
-### Imports
-# ---------------------------------------------------------------------------
-# Standard Library
+
 import decimal
 import os
+
 try:
     from math import inf
 except ImportError:
-    inf = float('inf')
+    inf = float("inf")
 
-# Third-Party
 import pytest
 from hypothesis import assume
 from hypothesis import given
@@ -29,22 +26,15 @@ try:
 except ImportError:
     has_scipy = False
 
-# Package / Application
 from .. import pyerf
 
 
-# ---------------------------------------------------------------------------
-### Constants and Setup
-# ---------------------------------------------------------------------------
 # Create a profile for testing on CI (Travis, GitLab, etc.)
-settings.register_profile('ci', settings(max_examples=1000))
-if os.getenv('CI', None) is not None:
-    settings.load_profile('ci')
+settings.register_profile("ci", settings(max_examples=1000))
+if os.getenv("CI", None) is not None:
+    settings.load_profile("ci")
 
 
-# ---------------------------------------------------------------------------
-### Helper Functions
-# ---------------------------------------------------------------------------
 def frange(x, y, jump):
     while x < y:
         yield float(x)
@@ -71,16 +61,13 @@ def use_math_stdlib(request):
         pyerf.erfc = pyerf._erfc
 
 
-# ---------------------------------------------------------------------------
-### Unit Tests
-# ---------------------------------------------------------------------------
 class TestErfInv(object):
     def test_erfinv_error(self):
         # values from
         # http://keisan.casio.com/has10/SpecExec.cgi?id=system/2006/1180573448
         known_values = (
-            (0.0001, 8.862269277728946917512E-5),
-            (0.001, 8.86227157466552104565E-4),
+            (0.0001, 8.862269277728946917512e-5),
+            (0.001, 8.86227157466552104565e-4),
             (0.01, 0.0088625012809505979078),
             (0.02, 0.0177263950266780184822),
             (0.1, 0.08885599049425768701574),
@@ -130,7 +117,7 @@ class TestErfInv(object):
 
     @given(st.floats())
     def test_exceptions(self, x):
-        allowed_exceptions = (ValueError, )
+        allowed_exceptions = (ValueError,)
         try:
             pyerf.erfinv(x)
         except allowed_exceptions:
@@ -145,7 +132,7 @@ class TestErf(object):
         # values from
         # http://keisan.casio.com/exec/system/1180573449
         known_values = (
-            (0.0001, 1.128379163334248694862E-4),
+            (0.0001, 1.128379163334248694862e-4),
             (0.001, 0.001128378790969236379948),
             (0.01, 0.01128341555584961691591),
             (0.02, 0.02256457469184494422437),
@@ -192,7 +179,7 @@ class TestErf(object):
 
     @given(st.floats())
     def test_exceptions(self, use_math_stdlib, x):
-        allowed_exceptions = (ValueError, )
+        allowed_exceptions = (ValueError,)
         try:
             pyerf.erf(x)
         except allowed_exceptions:
@@ -205,6 +192,7 @@ class TestErf(object):
     def test_result_always_between_plus_minus_one(self, use_math_stdlib, x):
         assume(abs(x) <= 1e300)
         import platform
+
         if platform.python_implementation() == "PyPy":
             assume(abs(x) < 1e100)
         assert pyerf.erf(x) <= 1
@@ -233,8 +221,8 @@ class TestErfc(object):
             (0.9999, 0.1573407219512405265817),
             (1, 0.1572992070502851306588),
             (2, 0.004677734981047265837931),
-            (3, 2.20904969985854413728E-5),
-            (4, 1.541725790028001885216E-8),
+            (3, 2.20904969985854413728e-5),
+            (4, 1.541725790028001885216e-8),
             (-1, 1.842700792949714869341),
             (-4, 1.99999998458274209972),
         )
@@ -258,7 +246,7 @@ class TestErfc(object):
 
     @given(st.floats())
     def test_exceptions(self, use_math_stdlib, x):
-        allowed_exceptions = (ValueError, )
+        allowed_exceptions = (ValueError,)
         try:
             pyerf.erfc(x)
         except allowed_exceptions:
@@ -302,7 +290,7 @@ class TestErfErfInv(object):
 class Test_PolEvl(object):
     @given(st.floats(), st.lists(st.floats()), st.integers())
     def test_exceptions(self, use_math_stdlib, x, coefs, N):
-        allowed_exceptions = (ValueError, )
+        allowed_exceptions = (ValueError,)
         try:
             pyerf._polevl(x, coefs, N)
         except allowed_exceptions:
@@ -315,7 +303,7 @@ class Test_PolEvl(object):
 class Test_P1Evl(object):
     @given(st.floats(), st.lists(st.floats()), st.integers())
     def test_exceptions(self, use_math_stdlib, x, coefs, N):
-        allowed_exceptions = (ValueError, )
+        allowed_exceptions = (ValueError,)
         try:
             pyerf._p1evl(x, coefs, N)
         except allowed_exceptions:
@@ -328,7 +316,7 @@ class Test_P1Evl(object):
 class Test_ndtri(object):
     @given(st.floats())
     def test_exceptions(self, use_math_stdlib, x):
-        allowed_exceptions = (ValueError, )
+        allowed_exceptions = (ValueError,)
         try:
             pyerf._ndtri(x)
         except allowed_exceptions:
